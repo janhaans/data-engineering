@@ -97,3 +97,78 @@ conda install jupyter
 ```
 jupyter notebook
 ```
+
+# Step 3: Explore Data Sources
+
+The data source is in S3 bucket `udacity-bend` (Keep in mind that the `udacity-dend` bucket is situated in the `us-west-2` region.):
+
+Song dataset: `s3://udacity-dend/song_data`
+Log dataset: `s3://udacity-dend/log_data`
+
+## Song Dataset
+
+The Song Dataset consists of files in JSON format and contains metadata about a song and the artist of that song. The files are partitioned by the first three letters of each song's track ID. For example, here are file paths to two files in this dataset.
+
+```
+song_data/A/B/C/TRABCEI128F424C983.json
+song_data/A/A/B/TRAABJL12903CDCF1A.json
+```
+
+And below is an example of what a single song file, TRAABJL12903CDCF1A.json, looks like.
+
+```
+{"num_songs": 1, "artist_id": "ARJIE2Y1187B994AB7", "artist_latitude": null, "artist_longitude": null, "artist_location": "", "artist_name": "Line Renaud", "song_id": "SOUPIRU12A6D4FA1E1", "title": "Der Kleine Dompfaff", "duration": 152.92036, "year": 0}
+```
+
+## Log Dataset
+
+The second dataset consists of log files in JSON format and contains activity logs from an imaginary music streaming app. The log files in the dataset you'll be working with are partitioned by year and month. For example, here are file paths to two files in this dataset.
+
+```
+log_data/2018/11/2018-11-12-events.json
+log_data/2018/11/2018-11-13-events.json
+```
+
+And below is an example of what the data in a log file, 2018-11-12-events.json, looks like.
+
+![log_data image](log-data.png)
+
+To properly read log data s3://udacity-dend/log_data, you'll need the following metadata file:
+
+## Log JSON Metadata
+
+The `log_json_path.json` file is used when loading JSON data into Redshift. It specifies the structure of the JSON data so that Redshift can properly parse and load it into the staging tables.
+
+In the context of this project, you will need the `log_json_path.json` file in the COPY command, which is responsible for loading the log data from S3 into the staging tables in Redshift. The `log_json_path.json` file tells Redshift how to interpret the JSON data and extract the relevant fields. This is essential for further processing and transforming the data into the desired analytics tables.
+
+Below is what data is in `log_json_path.json`.
+
+## AWS CLI commands
+
+Use AWS CLI to explore S3 bucket `udacity-bend` and the files in this S3 bucket
+
+```
+# list the files from Song Dataset
+aws s3 ls --profile datawarehouse s3://udacity-dend/song_data/                              # list prefixes A
+aws s3 ls --profile datawarehouse s3://udacity-dend/song_data/A/                            # list prefixes A-Z
+aws s3 ls --profile datawarehouse s3://udacity-dend/song_data/A/A/                          # list prefixes A-Z
+aws s3 ls --profile datawarehouse s3://udacity-dend/song_data/A/A/A/                        # list the song files in JSON format
+
+# shows the content of one log file from the Song Dataset
+aws s3 cp --profile datawarehouse s3://udacity-dend/song_data/A/A/A/TRAAAAK128F9318786.json -
+
+# list the files from Log Dataset
+aws s3 ls --profile datawarehouse s3://udacity-dend/log_data/                                     # list prefix 2018
+aws s3 ls --profile datawarehouse s3://udacity-dend/log_data/2018/                                # list prefix 11
+aws s3 ls --profile datawarehouse s3://udacity-dend/log_data/2018/11/                             # list the log files in JSON Format
+
+# shows the content of one log file from the Log Dataset
+aws s3 cp --profile datawarehouse s3://udacity-dend/log_data/2018/11/2018-11-01-events.json -
+
+# show the content Log JSON metadata file
+aws s3 cp --profile datawarehouse s3://udacity-dend/log_json_path.json -
+```
+
+# Step 4: Create Table Schemas
+
+..
